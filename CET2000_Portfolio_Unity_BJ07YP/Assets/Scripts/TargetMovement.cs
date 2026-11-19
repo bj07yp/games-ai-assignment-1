@@ -1,15 +1,13 @@
 using UnityEngine;
 
-// CET2000 Lab 04 - moves the target around the arena and bounces it off walls and obstacles.
-// (Ready to use; you don't need to change this file.)
 // A Kinematic body gets no OnCollisionEnter2D calls from static walls, so instead of waiting for a
 // collision it looks ahead with a CircleCast each step and reflects its direction before it hits.
 [RequireComponent(typeof(Rigidbody2D))]
 public class TargetMovement_Template : MonoBehaviour
 {
-    public float moveSpeed = 1.5f;
-    public bool moveTarget = true;              // untick for a stationary target
-    public LayerMask obstacleLayer;             // walls + obstacles (set by the CET2000 menu)
+    public float moveSpeed = 1.5f; // how fast the target moves per second
+    public bool moveTarget = true;  // if this was false the target would stay stationary
+    public LayerMask obstacleLayer; 
 
     private Rigidbody2D rb;
     private Vector2 direction;
@@ -17,16 +15,16 @@ public class TargetMovement_Template : MonoBehaviour
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.bodyType = RigidbodyType2D.Kinematic;
-        CircleCollider2D circle = GetComponent<CircleCollider2D>();
+        rb = GetComponent<Rigidbody2D>(); //initialises the targets rigidbody
+        rb.bodyType = RigidbodyType2D.Kinematic; //sets the targets rigidbody body type to kinematic
+        CircleCollider2D circle = GetComponent<CircleCollider2D>(); //links to the targets circlecollider
         if (circle != null) radius = circle.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
     }
 
     void Start()
     {
-        direction = Random.insideUnitCircle.normalized;
-        if (direction == Vector2.zero) direction = Vector2.right;
+        direction = Random.insideUnitCircle.normalized; // allows the target to start moving in a random direction each time the scene is started in game mode
+        if (direction == Vector2.zero) direction = Vector2.right; // makes sure the target still moves if its random direction returns a 0,0
     }
 
     void FixedUpdate()
@@ -36,7 +34,7 @@ public class TargetMovement_Template : MonoBehaviour
         RaycastHit2D hit = Physics2D.CircleCast(rb.position, radius, direction, step + 0.05f, obstacleLayer);
         if (hit.collider != null)
         {
-            direction = Vector2.Reflect(direction, hit.normal).normalized;   // bounce
+            direction = Vector2.Reflect(direction, hit.normal).normalized;   // makes the target 'bounce' off of any colliders it hits 
             return;
         }
         rb.MovePosition(rb.position + direction * step);
