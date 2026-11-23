@@ -1853,6 +1853,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8420343727703495365}
     - target: {fileID: 3704108021916623120, guid: 5c4b6f7d05cf76b45be65fb9219a6637, type: 3}
+      propertyPath: viewDistance
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3704108021916623120, guid: 5c4b6f7d05cf76b45be65fb9219a6637, type: 3}
+      propertyPath: useSearchState
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3704108021916623120, guid: 5c4b6f7d05cf76b45be65fb9219a6637, type: 3}
       propertyPath: obstacleLayer.m_Bits
       value: 0
       objectReference: {fileID: 0}
@@ -1988,6 +1996,10 @@ PrefabInstance:
       propertyPath: guard
       value: 
       objectReference: {fileID: 1221229028932318495}
+    - target: {fileID: 7483972532225783472, guid: 86917416c81799b4d9921254d6525b70, type: 3}
+      propertyPath: moveSpeed
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7483972532225783472, guid: 86917416c81799b4d9921254d6525b70, type: 3}
       propertyPath: obstacleLayer.m_Bits
       value: 0

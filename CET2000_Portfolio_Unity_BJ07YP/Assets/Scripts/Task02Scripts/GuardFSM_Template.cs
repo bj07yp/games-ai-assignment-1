@@ -130,7 +130,7 @@ public class GuardFSM_Template : MonoBehaviour
                 MoveTowards(player.position, chaseSpeed);
                 if (health < fleeHealth) ChangeState(GuardState.Flee);
                 else if (DistanceToPlayer() <= attackRange) ChangeState(GuardState.Attack);
-                else if (!canSeePlayer) ChangeState(GuardState.Patrol);
+                else if (!canSeePlayer) ChangeState(useSearchState ? GuardState.Search : GuardState.Patrol);
                 // TODO 3 - Chase (check the most important rule FIRST)
                 //   Update action : MoveTowards(player.position, chaseSpeed)
                 //   Transitions   : if health < fleeHealth                    -> Flee
@@ -170,6 +170,10 @@ public class GuardFSM_Template : MonoBehaviour
                 break;
 
             case GuardState.Search:
+                if (ReachedPoint(lastSeenPosition)) LookAround(dt);
+                else MoveTowards(lastSeenPosition, patrolSpeed);
+                if (canSeePlayer) ChangeState(GuardState.Chase);
+                else if (stateTimer >= searchTime) ChangeState(GuardState.Patrol);
                 // Expert E1 - Search (only used when useSearchState is ticked)
                 //   Go to lastSeenPosition; when there, LookAround(dt).
                 //   Transitions: canSeePlayer -> Chase;  stateTimer >= searchTime -> Patrol
@@ -197,12 +201,17 @@ public class GuardFSM_Template : MonoBehaviour
         {
             case GuardState.Idle:
                 SetColour(new Color(0.65f, 0.65f, 0.65f));
-                StopMoving(); break;
+                StopMoving(); 
+                break;
             case GuardState.Patrol:
                 SetColour(new Color(0.25f, 0.55f, 0.95f));
-                waypointIndex = NearestWaypoint(); break;
+                waypointIndex = NearestWaypoint(); 
+                break;
             case GuardState.Chase:
                 SetColour(new Color(1f, 0.6f, 0.1f)); Shout("Hey!");
+                break;
+            case GuardState.Search:
+                SetColour(new Color(0.95f, 0.85f, 0.2f)); Shout("Where did you go ? "); 
                 break;
             case GuardState.Attack:
                 SetColour(new Color(0.9f, 0.2f, 0.2f)); attackTimer =
