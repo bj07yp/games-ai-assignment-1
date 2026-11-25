@@ -24,9 +24,8 @@ public class ChaseNPC : MonoBehaviour
         if (player == null || !agent.isOnNavMesh) return;
         if (Time.time >= nextRepath)                    // time to plan again?
         {
-            // TODO 1 (Part B): two lines.
-            //   1. Call SetDestination on the agent with the player's position.
-            //   2. Set nextRepath to Time.time + repathInterval, so the next plan happens a little later.
+            agent.SetDestination(player.position); // plan a path on the NavMesh and start following it
+            nextRepath = Time.time + repathInterval; // the player moves, so plan again a little later
         }
     }
 

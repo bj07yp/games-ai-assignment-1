@@ -32,7 +32,7 @@ public class Patrol : MonoBehaviour
         if (waypoints.Length == 0 || !agent.isOnNavMesh) return;
         // TODO 2a (Part C): the guard has arrived when the path is NOT still being planned (agent.pathPending)
         //   AND agent.remainingDistance is no more than arriveDistance. Replace false with that test.
-        bool arrived = false;
+        bool arrived = !agent.pathPending && agent.remainingDistance <= arriveDistance;
         if (!arrived) return;
         index = NextIndex();
         agent.SetDestination(waypoints[index].position);
@@ -40,10 +40,15 @@ public class Patrol : MonoBehaviour
 
     int NextIndex()
     {
-        // TODO 2b (Part C): loop. Return the next index, wrapping from the last waypoint back to 0.
-        //   Hint: (index + 1) % waypoints.Length
-        // TODO 3 (Part C): ping-pong. If pingPong is on, use step instead: when index + step would go
-        //   below 0 or past the last waypoint, reverse step (step = -step). Then return index + step.
-        return index;
+        if (!pingPong)
+            return (index + 1) % waypoints.Length; // loop: 0 1 2 3 0 1 ... (% wraps 4 back to 0)
+        if (waypoints.Length < 2) return 0;
+        int next = index + step;
+        if (next < 0 || next >= waypoints.Length) // would fall off either end: turn round
+        {
+            step = -step;
+            next = index + step;
+        }
+        return next; // ping-pong: 0 1 2 3 2 1 0 1 ..
     }
 }

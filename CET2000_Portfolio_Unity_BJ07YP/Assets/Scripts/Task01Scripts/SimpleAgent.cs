@@ -41,8 +41,8 @@ public class SimpleAgent : MonoBehaviour
         if (targetHit.collider != null)
         {
             Debug.Log("Target detected");
-            //moveDirection = (targetHit.collider.transform.position - transform.position).normalized;      // this code snippet makes the agent chase the target when its raycast passes over it and the raycast follows where it goes allowsing the agent to follow
-             moveDirection = -(targetHit.collider.transform.position - transform.position).normalized;  // this code snippet makes the agents raycast turn away from the targets collider when they overlap, making the agent 'avoid' the target
+            moveDirection = (targetHit.collider.transform.position - transform.position).normalized;      // this code snippet makes the agent chase the target when its raycast passes over it and the raycast follows where it goes allowsing the agent to follow
+            // moveDirection = -(targetHit.collider.transform.position - transform.position).normalized;  // this code snippet makes the agents raycast turn away from the targets collider when they overlap, making the agent 'avoid' the target
         }
         else
         {
