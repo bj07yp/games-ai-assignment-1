@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Scenes/GuardBTScene.unity
-    guid: 9019fdb388f14ec48abbc89cb902fd7b
+    path: Assets/_Scenes/GuardFSMScene.unity
+    guid: 4c1068a0fda4c504686daa63ff239ea2
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

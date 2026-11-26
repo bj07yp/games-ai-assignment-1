@@ -1,6 +1,6 @@
 using UnityEngine;
-// Hides "field is never used" warnings until you complete the TODOs.
 #pragma warning disable 0169, 0414
+
 
 // The agent runs the loop SENSE -> ACT once per physics step (FixedUpdate).
 [RequireComponent(typeof(Rigidbody2D))]
@@ -13,8 +13,7 @@ public class SimpleAgent : MonoBehaviour
     public LayerMask targetLayer;               
     public LayerMask obstacleLayer;             
 
-    [Header("Links")]
-    public PerformanceLogger logger;   
+    [Header("Links")] 
 
     private Rigidbody2D rb;
     private Vector2 moveDirection;
@@ -32,24 +31,24 @@ public class SimpleAgent : MonoBehaviour
 
     void Sense()
     {
-        // Shows the raycast visiblly in the game view to help track how it moves 
+        // This shows the raycast as a red line that helps to visibly track where the agent is looking.
         Debug.DrawRay(transform.position, transform.up * visionRange, Color.red);
 
 
-        
+        //this creates a raycast that checks if the agent sees the target and if it does, depending on which line of code is uncommented, it will either chase the target or avoid it.
         RaycastHit2D targetHit = Physics2D.Raycast(transform.position, transform.up, visionRange, targetLayer);
         if (targetHit.collider != null)
         {
             Debug.Log("Target detected");
-            moveDirection = (targetHit.collider.transform.position - transform.position).normalized;      // this code snippet makes the agent chase the target when its raycast passes over it and the raycast follows where it goes allowsing the agent to follow
+            moveDirection = (targetHit.collider.transform.position - transform.position).normalized;      // this code snippet makes the agents raycast follow the target when they overlap, making the agent 'chase' the target
             // moveDirection = -(targetHit.collider.transform.position - transform.position).normalized;  // this code snippet makes the agents raycast turn away from the targets collider when they overlap, making the agent 'avoid' the target
         }
         else
         {
-            moveDirection = transform.up; 
+            moveDirection = transform.up; //keep moving forward if no target is detected
         }
         
-        RaycastHit2D obstacleHit = Physics2D.Raycast(transform.position, transform.up, 3f, obstacleLayer); // try circlecast to create a fan!!!!
+        RaycastHit2D obstacleHit = Physics2D.Raycast(transform.position, transform.up, 3f, obstacleLayer);
         if (obstacleHit.collider != null)
         {
             //moveDirection = -(obstacleHit.collider.transform.position - transform.position).normalized; // this code snippet is the same as the above code that allows the agent to avoid the target, helping the agent turn away from objects it might collide with 
@@ -59,30 +58,24 @@ public class SimpleAgent : MonoBehaviour
 
        
     }
-       
-        //Idea: one forward ray only sees a thin line. Try several rays in a fan, or check the target's
-        //distance first and then cast one ray straight at it.
 
-    // TODO 2: Move the agent along moveDirection and rotate it to face the direction of travel
-    void Move()
+    void Move() // this method is what allows the agent to move and rotate towards the target, or away from it depending on which line of code is uncommented in the Sense method
     {
         if (moveDirection == Vector2.zero) { rb.linearVelocity = Vector2.zero; return; }
-        float targetAngle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg - 90f;   // sprite faces +Y
+        float targetAngle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg - 90f;   // Calculates the angle to the target direction
         rb.MoveRotation(Mathf.MoveTowardsAngle(rb.rotation, targetAngle, rotationSpeed * Time.fixedDeltaTime));
         rb.linearVelocity = (Vector2)transform.up * moveSpeed;
     }
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.collider.CompareTag("Obstacle"))
+        if (col.collider.CompareTag("Obstacle")) // when the agent collides with an obstacle.
         {
-            Debug.Log("Collision with " + col.collider.name);
-            // TODO 3: count it, e.g.  if (logger != null) logger.IncrementCollisions();
+            Debug.Log("Collision with " + col.collider.name); 
         }
-        else if (col.collider.CompareTag("Target"))
+        else if (col.collider.CompareTag("Target")) // when the agent collides with the target.
         {
             Debug.Log("Target reached!");
-            // TODO 3: count it, e.g.  if (logger != null) logger.IncrementReached();
         }
     }
 }
