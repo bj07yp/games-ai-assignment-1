@@ -1,8 +1,5 @@
 using UnityEngine;
 
-// CET2000 Lab 05 - the player (provided, no changes needed).
-// Move: W A S D or the arrow keys (click the Game view first).  Hit the guard: Space when close.
-// Keys are read through OnGUI events, so this works with the old Input Manager AND the new Input System.
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
@@ -10,7 +7,7 @@ public class PlayerController : MonoBehaviour
     public GuardFSM_Template guard;
     public float hitRange = 1.5f;
     public float hitDamage = 25f;
-
+    
     [Header("Autopilot (wanders by itself, handy for testing)")]
     public bool autopilot = false;
     public LayerMask obstacleLayer;
@@ -69,15 +66,15 @@ public class PlayerController : MonoBehaviour
         if (sr != null) sr.color = Time.time < flashUntil ? Color.red : baseColour;
     }
 
-    public void HitGuard()
+    public void HitGuard() // method that allows player to 'hit' and damage the guard
     {
         if (guard == null || Time.time < nextHit) return;
-        nextHit = Time.time + 0.4f;
+        nextHit = Time.time + 0.4f; // time that has to go by before another 'hit' is allowed
         if (Vector2.Distance(rb.position, guard.transform.position) <= hitRange) guard.TakeDamage(hitDamage);
-        else Debug.Log("[Player] Too far away to hit the guard.");
+        else Debug.Log("[Player] Too far away to hit the guard."); //if guard is outside of players range the console displays this
     }
 
-    public void TakeHit()
+    public void TakeHit() // allows the player to be hit by the guard
     {
         TimesHit++;
         flashUntil = Time.time + 0.15f;

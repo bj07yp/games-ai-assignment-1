@@ -1,11 +1,5 @@
 using UnityEngine;
-
-// Hides "field is never used" warnings until you complete the TODOs.
 #pragma warning disable 0169, 0414
-
-// CET2000 Lab 05 - Expert E3: the same FSM written as one class per state (the State pattern).
-// Idle and Patrol are written for you as examples. YOUR JOB (E3): complete Chase, Attack and Flee,
-// then tick "Use State Classes" on the guard to run this version instead of the switch.
 
 public interface IGuardState
 {
@@ -18,7 +12,7 @@ public interface IGuardState
 // One object per state for each guard.
 public class GuardStateSet
 {
-    public readonly IGuardState Idle = new IdleState();
+    public readonly IGuardState Idle = new IdleState(); // adds a new state to the guards state set
     public readonly IGuardState Patrol = new PatrolState();
     public readonly IGuardState Chase = new ChaseState();
     public readonly IGuardState Attack = new AttackState();
@@ -29,7 +23,7 @@ public class IdleState : IGuardState
 {
     public GuardState Id => GuardState.Idle;
     public void Enter(GuardFSM_Template g) { g.SetColour(new Color(0.65f, 0.65f, 0.65f)); g.StopMoving(); }
-    public void Tick(GuardFSM_Template g, float dt)
+    public void Tick(GuardFSM_Template g, float dt) // triggers the below behaviours every tick when applicable
     {
         g.StopMoving();
         g.Regenerate(dt);
@@ -57,9 +51,7 @@ public class ChaseState : IGuardState
     public void Enter(GuardFSM_Template g) { g.SetColour(new Color(1f, 0.6f, 0.1f)); g.Shout("Hey!"); }
     public void Tick(GuardFSM_Template g, float dt)
     {
-        // TODO E3: same rules as TODO 3, written with g. in front, e.g.
-        //   g.MoveTowards(g.PlayerPosition, g.chaseSpeed);
-        //   if (g.health < g.fleeHealth) g.SetState(g.S.Flee); else if ...
+
     }
     public void Exit(GuardFSM_Template g) { }
 }
@@ -71,7 +63,7 @@ public class AttackState : IGuardState
     public void Enter(GuardFSM_Template g) { g.SetColour(new Color(0.9f, 0.2f, 0.2f)); cooldown = 0.2f; }
     public void Tick(GuardFSM_Template g, float dt)
     {
-        // TODO E3: same rules as TODO 4. Use the field "cooldown" instead of attackTimer.
+        
     }
     public void Exit(GuardFSM_Template g) => g.StopMoving();
 }
@@ -83,7 +75,7 @@ public class FleeState : IGuardState
     public void Enter(GuardFSM_Template g) { g.SetColour(new Color(0.6f, 0.35f, 0.85f)); safe = 0f; g.Shout("Retreat!"); }
     public void Tick(GuardFSM_Template g, float dt)
     {
-        // TODO E3: same rules as TODO 5. Use the field "safe" instead of safeTimer.
+        
     }
     public void Exit(GuardFSM_Template g) { }
 }

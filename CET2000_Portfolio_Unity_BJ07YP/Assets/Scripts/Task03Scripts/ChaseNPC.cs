@@ -9,7 +9,7 @@ public class ChaseNPC : MonoBehaviour
 {
     public Transform player;
     [Tooltip("How often to plan a new path to the player, in seconds. 0 = every frame.")]
-    public float repathInterval = 0.2f;
+    public float repathInterval = 0.2f; // how often the npc updates its required route to the player
 
     NavMeshAgent agent;
     float nextRepath;
@@ -22,7 +22,7 @@ public class ChaseNPC : MonoBehaviour
     void Update()
     {
         if (player == null || !agent.isOnNavMesh) return;
-        if (Time.time >= nextRepath)                    // time to plan again?
+        if (Time.time >= nextRepath) // time to plan again?
         {
             agent.SetDestination(player.position); // plan a path on the NavMesh and start following it
             nextRepath = Time.time + repathInterval; // the player moves, so plan again a little later
@@ -31,7 +31,7 @@ public class ChaseNPC : MonoBehaviour
 
     void OnDisable()
     {
-        nextRepath = 0f;                                // plan straight away when switched on again
+        nextRepath = 0f;  // plan straight away when switched on again
         if (agent != null && agent.isOnNavMesh) agent.ResetPath();
     }
 }

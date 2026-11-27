@@ -1,14 +1,6 @@
 using UnityEngine;
-
-// Hides "field is never used" warnings until you complete the TODOs.
 #pragma warning disable 0169, 0414
 
-// CET2000 Lab 05 - Finite State Machines.
-// YOUR JOB: complete TODO 1 to 6 below. Everything marked (provided) already works.
-// A guard NPC controlled by a finite state machine (enum + switch).
-// States: Idle, Patrol, Chase, Attack, Flee (+ Search, expert).
-// Exactly one state is active. Each physics step: run the current state's Update action,
-// then check its transitions in priority order. ChangeState() (provided) runs the Exit and Enter actions.
 
 public enum GuardState { Idle, Patrol, Chase, Attack, Flee, Search }
 
@@ -26,22 +18,22 @@ public class GuardFSM_Template : MonoBehaviour
 
     [Header("Senses")]
     public float viewDistance = 5f;
-    public float fieldOfView = 110f;              // degrees
+    public float fieldOfView = 110f;
 
     [Header("Movement")]
     public float patrolSpeed = 1.5f;
     public float chaseSpeed = 2.6f;
     public float fleeSpeed = 3f;
-    public float turnSpeed = 360f;                // degrees per second
+    public float turnSpeed = 360f;
 
     [Header("Rules")]
-    public float idleTime = 2f;                   // Idle -> Patrol after this many seconds
+    public float idleTime = 4f;                   // Idle -> Patrol after this many seconds
     public float attackRange = 1.2f;              // Chase -> Attack when this close
     public float attackExitRange = 1.6f;          // Attack -> Chase when further than this (Expert E2)
-    public float attackCooldown = 0.8f;           // seconds between hits
+    public float attackCooldown = 1f;           // seconds between hits
     public float fleeHealth = 30f;                // Flee when health drops below this
     public float safeDistance = 4f;               // Flee -> Idle when this far away ...
-    public float safeTime = 3f;                   // ... for this many seconds
+    public float safeTime = 3f;                  
 
     [Header("Health")]
     public float maxHealth = 100f;
@@ -98,7 +90,7 @@ public class GuardFSM_Template : MonoBehaviour
         canSeePlayer = CanSeePlayer();
         if (canSeePlayer) lastSeenPosition = player.position;
 
-        if (useStateClasses)                       // Expert E3: the same FSM, one class per state
+        if (useStateClasses)   
         {
             if (current == null) SetState(S.Idle);
             current.Tick(this, dt);
@@ -107,38 +99,29 @@ public class GuardFSM_Template : MonoBehaviour
 
         switch (state)
         {
-            case GuardState.Idle:
+            case GuardState.Idle: // handles each possible state change between 'Idle' and related states
                 StopMoving();
                 Regenerate(dt);
                 if (canSeePlayer) ChangeState(GuardState.Chase);
                 else if (stateTimer >= idleTime) ChangeState(GuardState.Patrol);
                 break;
-                // TODO 1 - Idle
-                //   Update action : stand still (StopMoving) and get health back (Regenerate(dt)).
-                //   Transitions   : if canSeePlayer                 -> Chase
-                //                   else if stateTimer >= idleTime  -> Patrol
+                
 
-            case GuardState.Patrol:
+            case GuardState.Patrol:  // handles each possible state change between 'Patrol' and related states
                 PatrolWaypoints(patrolSpeed);
                 if (canSeePlayer) ChangeState(GuardState.Chase);
-                // TODO 2 - Patrol
-                //   Update action : PatrolWaypoints(patrolSpeed)
-                //   Transitions   : if canSeePlayer -> Chase
+               
                 break;
 
-            case GuardState.Chase:
+            case GuardState.Chase:  // handles each possible state change between 'Chase' and related states
                 MoveTowards(player.position, chaseSpeed);
                 if (health < fleeHealth) ChangeState(GuardState.Flee);
                 else if (DistanceToPlayer() <= attackRange) ChangeState(GuardState.Attack);
                 else if (!canSeePlayer) ChangeState(useSearchState ? GuardState.Search : GuardState.Patrol);
-                // TODO 3 - Chase (check the most important rule FIRST)
-                //   Update action : MoveTowards(player.position, chaseSpeed)
-                //   Transitions   : if health < fleeHealth                    -> Flee
-                //                   else if DistanceToPlayer() <= attackRange -> Attack
-                //                   else if !canSeePlayer                     -> Patrol
+            
                 break;
 
-            case GuardState.Attack:
+            case GuardState.Attack:  // handles each possible state change between 'Attack' and related states
                 StopMoving();
                 FacePlayer();
                 attackTimer -= dt;
@@ -149,39 +132,29 @@ public class GuardFSM_Template : MonoBehaviour
                 }
                 if (health < fleeHealth) ChangeState(GuardState.Flee);
                 else if (DistanceToPlayer() > attackRange) ChangeState(GuardState.Chase);
-                // TODO 4 - Attack
-                //   Update action : StopMoving(); FacePlayer();
-                //                   count attackTimer down by dt; when it reaches 0: HitPlayer() and
-                //                   set attackTimer = attackCooldown
-                //   Transitions   : if health < fleeHealth                    -> Flee
-                //                   else if DistanceToPlayer() > attackRange  -> Chase
+               
                 break;
 
-            case GuardState.Flee:
+            case GuardState.Flee:  // handles each possible state change between 'Flee' and related states
                 MoveAwayFrom(player.position, fleeSpeed);
                 Regenerate(dt);
                 if (DistanceToPlayer() >= safeDistance) safeTimer += dt;
                 else safeTimer = 0f;
                 if (safeTimer >= safeTime) ChangeState(GuardState.Idle);
-                // TODO 5 - Flee
-                //   Update action : MoveAwayFrom(player.position, fleeSpeed); Regenerate(dt);
-                //                   if DistanceToPlayer() >= safeDistance add dt to safeTimer, else set it to 0
-                //   Transitions   : if safeTimer >= safeTime -> Idle
+              
                 break;
 
-            case GuardState.Search:
+            case GuardState.Search:  // handles each possible state change between 'Search' and related states
                 if (ReachedPoint(lastSeenPosition)) LookAround(dt);
                 else MoveTowards(lastSeenPosition, patrolSpeed);
                 if (canSeePlayer) ChangeState(GuardState.Chase);
                 else if (stateTimer >= searchTime) ChangeState(GuardState.Patrol);
-                // Expert E1 - Search (only used when useSearchState is ticked)
-                //   Go to lastSeenPosition; when there, LookAround(dt).
-                //   Transitions: canSeePlayer -> Chase;  stateTimer >= searchTime -> Patrol
+              
                 break;
         }
     }
 
-    // ------------------------------------------------------------ CHANGE STATE (provided)
+ 
     public void ChangeState(GuardState next)
     {
         if (next == state) return;
@@ -194,31 +167,32 @@ public class GuardFSM_Template : MonoBehaviour
         StateChanged?.Invoke(previous, next);
     }
 
-    // ------------------------------------------------------------ ENTER / EXIT ACTIONS (TODO 6)
     void OnEnter(GuardState s)
     {
         switch (s)
         {
-            case GuardState.Idle:
-                SetColour(new Color(0.65f, 0.65f, 0.65f));
-                StopMoving(); 
+            case GuardState.Idle: 
+                SetColour(new Color(0.65f, 0.65f, 0.65f)); // changes the guards colour when it changes state
+                StopMoving(); // triggers this method when the guard enters idle
                 break;
             case GuardState.Patrol:
                 SetColour(new Color(0.25f, 0.55f, 0.95f));
-                waypointIndex = NearestWaypoint(); 
+                waypointIndex = NearestWaypoint(); // assigns new information to this method when the state changes to patrol
                 break;
             case GuardState.Chase:
-                SetColour(new Color(1f, 0.6f, 0.1f)); Shout("Hey!");
+                SetColour(new Color(1f, 0.6f, 0.1f)); Shout("Hey!"); // when the guard enters the chase state the word 'Hey!' apppears above its head
                 break;
             case GuardState.Search:
-                SetColour(new Color(0.95f, 0.85f, 0.2f)); Shout("Where did you go ? "); 
+                SetColour(new Color(0.95f, 0.85f, 0.2f)); Shout("Where did you go ? "); // when the guard enters the search state the words 'Where did you go?' apppear53 above its head
                 break;
             case GuardState.Attack:
-                SetColour(new Color(0.9f, 0.2f, 0.2f)); attackTimer =
-                           0.2f; break;
+                SetColour(new Color(0.9f, 0.2f, 0.2f)); 
+                attackTimer = 0.2f;
+                break;
             case GuardState.Flee:
-                SetColour(new Color(0.6f, 0.35f, 0.85f)); safeTimer =
-                           0f; break;
+                SetColour(new Color(0.6f, 0.35f, 0.85f)); 
+                safeTimer = 0f; 
+                break;
         }
     }
     void OnExit(GuardState s)
@@ -232,7 +206,6 @@ public class GuardFSM_Template : MonoBehaviour
         }
     }
 
-    // ------------------------------------------------------------ EXPERT E3 hook (provided)
     public void SetState(IGuardState next)
     {
         if (next == null || next == current) return;
@@ -246,13 +219,11 @@ public class GuardFSM_Template : MonoBehaviour
         if (previous != state) StateChanged?.Invoke(previous, state);
     }
 
-    // ============================================================ HELPERS (provided, do not change)
-    // ---- sensing ----
-    bool CanSeePlayer()
+    bool CanSeePlayer() // tells the guard whether they can 'see' the player or not
     {
         if (player == null) return false;
         Vector2 toPlayer = (Vector2)player.position - rb.position;
-        if (toPlayer.magnitude > viewDistance) return false;                        // too far
+        if (toPlayer.magnitude > viewDistance) return false;    // too far
         if (Vector2.Angle(Forward, toPlayer) > fieldOfView * 0.5f) return false;    // outside the view cone
         RaycastHit2D hit = Physics2D.Raycast(rb.position, toPlayer.normalized, viewDistance, playerLayer.value | obstacleLayer.value);
         return hit.collider != null && (hit.collider.transform == player || hit.collider.transform.IsChildOf(player));
@@ -285,14 +256,14 @@ public class GuardFSM_Template : MonoBehaviour
         MoveTowards(waypoints[waypointIndex].position, speed);
     }
 
-    public void StopMoving()
+    public void StopMoving() // stops any movement 
     {
         if (rb == null) return;
         rb.linearVelocity = Vector2.zero;
         rb.angularVelocity = 0f;
     }
 
-    public void FacePlayer()
+    public void FacePlayer() // faces the front of hte guard towards the player
     {
         Vector2 d = PlayerPosition - rb.position;
         if (d.sqrMagnitude > 1e-6f) Turn(d.normalized);
@@ -313,7 +284,7 @@ public class GuardFSM_Template : MonoBehaviour
         Debug.Log("[Guard] Hits the player (" + HitsOnPlayer + ")");
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount) // removes health from the guard when the player attacks
     {
         health = Mathf.Max(0f, health - amount);
         Debug.Log("[Guard] Took " + amount + " damage, health " + health.ToString("0"));
@@ -342,7 +313,7 @@ public class GuardFSM_Template : MonoBehaviour
         if (previous != state) StateChanged?.Invoke(previous, state);
     }
 
-    // ---- internals ----
+    
     Vector2 Forward => DirFromAngle(rb != null ? rb.rotation : transform.eulerAngles.z);
 
     static Vector2 DirFromAngle(float deg)
@@ -389,7 +360,7 @@ public class GuardFSM_Template : MonoBehaviour
         return best;
     }
 
-    // ---- state label above the guard's head (provided) ----
+    // states the state label above the guard's head
     string shout = "";
     float shoutUntil;
 

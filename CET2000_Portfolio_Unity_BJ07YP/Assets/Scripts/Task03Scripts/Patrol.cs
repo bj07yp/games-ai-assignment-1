@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-// CET2000 Lab 08 - Part C: the red guard patrols designer-placed waypoints.
 // The waypoints decide WHERE to go next; the NavMesh works out HOW to get there.
 [RequireComponent(typeof(NavMeshAgent))]
 public class Patrol : MonoBehaviour
@@ -30,8 +29,6 @@ public class Patrol : MonoBehaviour
     void Update()
     {
         if (waypoints.Length == 0 || !agent.isOnNavMesh) return;
-        // TODO 2a (Part C): the guard has arrived when the path is NOT still being planned (agent.pathPending)
-        //   AND agent.remainingDistance is no more than arriveDistance. Replace false with that test.
         bool arrived = !agent.pathPending && agent.remainingDistance <= arriveDistance;
         if (!arrived) return;
         index = NextIndex();
@@ -49,6 +46,6 @@ public class Patrol : MonoBehaviour
             step = -step;
             next = index + step;
         }
-        return next; // ping-pong: 0 1 2 3 2 1 0 1 ..
+        return next; 
     }
 }

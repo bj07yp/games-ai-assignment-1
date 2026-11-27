@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-// CET2000 Lab 08 - Part F: the hybrid approach from the lecture.
 // The NavMesh plans the GLOBAL route to the player; evade steering makes a LOCAL change when the guard is close.
 [RequireComponent(typeof(NavMeshAgent))]
 public class HybridNavigator : MonoBehaviour
@@ -27,13 +26,6 @@ public class HybridNavigator : MonoBehaviour
     void Update()
     {
         if (player == null || enemy == null || !agent.isOnNavMesh) return;
-        // TODO 8 (Part F): four steps, see the lab instructions.
-        //   1 GLOBAL: send the agent to the player (SetDestination)
-        //   2 SEEK:   Vector3 desired = agent.desiredVelocity;
-        //   3 LOCAL:  away = transform.position - enemy.position (set away.y = 0)
-        //             Evading = away.magnitude < dangerRadius
-        //             if Evading, add away.normalized * agent.speed * evadeWeight to desired
-        //   4 MOVE:   agent.velocity = Vector3.ClampMagnitude(desired, agent.speed);
         Evading = false;
     }
 

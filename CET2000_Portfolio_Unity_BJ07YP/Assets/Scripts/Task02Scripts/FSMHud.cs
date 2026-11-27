@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// CET2000 Lab 05 - on-screen panel (provided, no changes needed).
+//on-screen panel 
 // Shows the guard's state, health and the last state changes, plus test buttons.
 public class FSMHud : MonoBehaviour
 {
